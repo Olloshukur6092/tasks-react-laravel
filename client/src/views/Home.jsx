@@ -52,7 +52,14 @@ const Home = () => {
         `exercise?category=${category}&status=${status}&scoreFrom=${scoreFrom}&scoreTo=${scoreTo}`
       );
       console.log(data);
-      setExerciseList(data.data.exercises)
+      setExerciseList(data.data.exercises);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSearchInputChange = async (e) => {
+    try {
     } catch (err) {
       console.log(err);
     }
@@ -102,7 +109,7 @@ const Home = () => {
                     className="form-control"
                     placeholder="search by name..."
                     value={search}
-                    onChange={""}
+                    onChange={handleSearchInputChange}
                   />
                 </div>
               </div>
@@ -111,7 +118,6 @@ const Home = () => {
                 <div className="category-filter">
                   <label htmlFor="category-filter">Category Filter</label>
                   <select
-                    name=""
                     id="category-filter"
                     className="form-select mt-2"
                     value={category}
@@ -163,14 +169,13 @@ const Home = () => {
                 <div className="status-filter">
                   <label htmlFor="status-filter">Status</label>
                   <select
-                    name=""
                     id="status-filter"
                     className="form-select mt-2"
                     value={status}
                     onChange={handleStatusChange}
                   >
-                    <option selected disabled>
-                      Select
+                    <option value={"0"} selected disabled>
+                      --Select--
                     </option>
                     <option value="1">Yechilmagan</option>
                     <option value="2">Yechilgan</option>

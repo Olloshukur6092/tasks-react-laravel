@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Models\Exercise;
 use App\Repository\Interfaces\ExerciseRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ExerciseRepository implements ExerciseRepositoryInterface
 {
@@ -12,7 +13,7 @@ class ExerciseRepository implements ExerciseRepositoryInterface
     {
         $this->exerciseModel = $exercise->query();
     }
-    public function indexExercise($category, $scoreFrom, $scoreTo, $status)
+    public function indexExercise($category, $scoreFrom, $scoreTo, $status, $search)
     {
         $exercise_query = $this->exerciseModel->with('category');
         if ($status) {
@@ -25,6 +26,13 @@ class ExerciseRepository implements ExerciseRepositoryInterface
         }
         if ($scoreFrom && $scoreTo) {
             $exercise_query->whereBetween('score', [$scoreFrom, $scoreTo]);
+        }
+        if ($search) {
+            $exercise_query->where(function ($query) use ($search) {
+                $serachLower = strtolower($search);
+                $query->where(DB::raw('LOWER(title)'), 'like', '%' . $serachLower . '%')
+                    ->orWhere(DB::raw('LOWER(description)'), 'like', '%' . $serachLower . '%');
+            });
         }
         return $exercise_query->get();
     }
