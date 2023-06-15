@@ -15,7 +15,7 @@ class ExerciseController extends Controller
     }
     public function index(Request $request)
     {
-        $exercises = $this->exerciseRepository->indexExercise($request->category, $request->score, $request->status);
+        $exercises = $this->exerciseRepository->indexExercise($request->category, $request->scoreFrom, $request->scoreTo, $request->status);
         return response()->json([
             'exercises' => $exercises,
         ]);
@@ -33,6 +33,14 @@ class ExerciseController extends Controller
         $this->exerciseRepository->storeExercise($data);
         return response()->json([
             'message' => 'Exercise saved successfully.',
+        ]);
+    }
+
+    public function show(string $id)
+    {
+        $exercise = $this->exerciseRepository->show($id);
+        return response()->json([
+            'exercise' => $exercise
         ]);
     }
 }

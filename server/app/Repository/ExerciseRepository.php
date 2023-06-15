@@ -12,16 +12,19 @@ class ExerciseRepository implements ExerciseRepositoryInterface
     {
         $this->exerciseModel = $exercise->query();
     }
-    public function indexExercise($category, $score, $status)
+    public function indexExercise($category, $scoreFrom, $scoreTo, $status)
     {
         $exercise_query = $this->exerciseModel->with('category');
         if ($status) {
-            $exercise_query->where('status', $status);
+            $exercise_query->where('status', $status)->orderBy('status', 'asc');
         }
         if ($category) {
             $exercise_query->whereHas('category', function ($query) use ($category) {
                 $query->where('category_name', $category);
             });
+        }
+        if ($scoreFrom && $scoreTo) {
+            $exercise_query->whereBetween('score', [$scoreFrom, $scoreTo]);
         }
         return $exercise_query->get();
     }
@@ -29,5 +32,10 @@ class ExerciseRepository implements ExerciseRepositoryInterface
     public function storeExercise($data)
     {
         $this->exerciseModel->create($data);
+    }
+
+    public function show(string $id)
+    {
+        return $this->exerciseModel->where(['id' => $id])->with('category')->first();
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->foreignId('cat_id');
             $table->integer('score');
-            $table->string('status');
+            $table->integer('status');
             $table->timestamps();
         });
     }

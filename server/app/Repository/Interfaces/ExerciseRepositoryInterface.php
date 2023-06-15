@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace App\Repository\Interfaces;
 
 interface ExerciseRepositoryInterface
 {
-    public function indexExercise($category, $score, $status);
-    public function storeExercise($data);
+    public function indexExercise($category, $scoreFrom, $scoreTo, $status);
+    public function storeExercise(array $data);
+    public function show(string $id);
 }

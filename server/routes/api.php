@@ -24,3 +24,4 @@ Route::get('category', [CategoryController::class, 'index']);
 Route::post('category-add', [CategoryController::class, 'store']);
 Route::get('exercise', [ExerciseController::class, 'index']);
 Route::post('exercise-add', [ExerciseController::class, 'store']);
+Route::get('exercise/{id}', [ExerciseController::class, 'show']);
