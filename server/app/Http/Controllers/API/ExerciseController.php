@@ -15,7 +15,7 @@ class ExerciseController extends Controller
     }
     public function index(Request $request)
     {
-        $exercises = $this->exerciseRepository->indexExercise($request->category, $request->scoreFrom, $request->scoreTo, $request->status, $request->search);
+        $exercises = $this->exerciseRepository->indexExercise($request->category, $request->scoreFrom, $request->scoreTo, $request->status, $request->search, $request->sortBy, $request->sortOrder, $request->perPage, $request->paginate);
         return response()->json([
             'exercises' => $exercises,
         ]);

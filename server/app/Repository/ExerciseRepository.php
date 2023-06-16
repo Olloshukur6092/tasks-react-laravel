@@ -13,28 +13,55 @@ class ExerciseRepository implements ExerciseRepositoryInterface
     {
         $this->exerciseModel = $exercise->query();
     }
-    public function indexExercise($category, $scoreFrom, $scoreTo, $status, $search)
+    public function indexExercise($category, $scoreFrom, $scoreTo, $status, $search, $sortBy, $sortOrder, $perPage, $paginate)
     {
         $exercise_query = $this->exerciseModel->with('category');
         if ($status) {
-            $exercise_query->where('status', $status)->orderBy('status', 'asc');
+            $exercise = $exercise_query->where('status', $status)->get();
         }
         if ($category) {
-            $exercise_query->whereHas('category', function ($query) use ($category) {
+            $exercise = $exercise_query->whereHas('category', function ($query) use ($category) {
                 $query->where('category_name', $category);
-            });
+            })->get();
         }
         if ($scoreFrom && $scoreTo) {
-            $exercise_query->whereBetween('score', [$scoreFrom, $scoreTo]);
+            $exercise = $exercise_query->whereBetween('score', [$scoreFrom, $scoreTo])->get();
         }
         if ($search) {
-            $exercise_query->where(function ($query) use ($search) {
+            $exercise = $exercise_query->where(function ($query) use ($search) {
                 $serachLower = strtolower($search);
                 $query->where(DB::raw('LOWER(title)'), 'like', '%' . $serachLower . '%')
-                    ->orWhere(DB::raw('LOWER(description)'), 'like', '%' . $serachLower . '%');
+                    ->orWhere(DB::raw('LOWER(description)'), 'like', '%' . $serachLower . '%')->get();
             });
         }
-        return $exercise_query->get();
+
+        // sort
+        if ($sortBy && in_array($sortBy, ['category["category_name"]', 'status', 'score', 'id'])) {
+            $sortBys = $sortBy;
+        } else {
+            $sortBys = 'score';
+        }
+
+        if ($sortOrder && in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrders = $sortOrder;
+        } else {
+            $sortOrders = 'desc';
+        }
+
+        if ($perPage) {
+            $per_page = $perPage;
+        } else {
+            $per_page = 6;
+        }
+
+        if ($paginate) {
+            $exercise = $exercise_query->orderBy($sortBys, $sortOrders)->paginate($per_page);
+        } else {
+            $exercise = $exercise_query->orderBy($sortBys, $sortOrders)->get();
+        }
+
+        // return $exercise_query->get();
+        return $exercise;
     }
 
     public function storeExercise($data)

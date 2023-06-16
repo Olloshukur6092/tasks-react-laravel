@@ -1,34 +1,24 @@
 import React from "react";
 
-const Pagenation = () => {
+const Pagenation = ({ totalPages, onPageChange }) => {
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  };
+
   return (
     <nav aria-label="Page navigation example">
       <ul className="pagination bg-white shadow justify-content-center p-2">
-        <li className="page-item">
-          <a className="page-link px-4" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link px-4" href="#">
-            1
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link px-4" href="#">
-            2
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link px-4" href="#">
-            3
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link px-4" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
+        <button className="btn btn-primary" onClick={handlePreviousPage}>Prev</button>
+        <li className="page-item">2</li>
+        <button className="btn btn-primary" onClick={handleNextPage}>Next</button>
       </ul>
     </nav>
   );

@@ -12,30 +12,17 @@ const Home = () => {
   const [status, setStatus] = useState("");
   const [scoreFrom, setScoreFrom] = useState("");
   const [scoreTo, setScoreTo] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(0);
 
   const handleCategoryChange = async (e) => {
     setCategory(e.target.value);
-    console.log(e.target.value);
-    try {
-      const data = await axiosApi.get(`exercise?category=${e.target.value}`);
-      console.log(data);
-      setExerciseList(data.data.exercises);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const handleStatusChange = async (e) => {
     setStatus(e.target.value);
-    try {
-      const data = await axiosApi.get(
-        `exercise?category=${category}&status=${e.target.value}`
-      );
-      console.log(data);
-      setExerciseList(data.data.exercises);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const handleScoreFromChange = (e) => {
@@ -51,24 +38,44 @@ const Home = () => {
       const data = await axiosApi.get(
         `exercise?category=${category}&status=${status}&scoreFrom=${scoreFrom}&scoreTo=${scoreTo}`
       );
-      console.log(data);
       setExerciseList(data.data.exercises);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleSearchInputChange = async (e) => {
-    try {
-    } catch (err) {
-      console.log(err);
-    }
+  const handleScoreSortChange = (e, sortBy) => {
+    setSortOrder(e.target.value);
+    setSortBy(sortBy);
+    // console.log(sortBy);
   };
+
+  useEffect(() => {
+    const filteredAllElement = async () => {
+      const data = await axiosApi.get("exercise", {
+        params: {
+          category: category,
+          status: status,
+          search: search,
+          sortBy: sortBy,
+          sortOrder: sortOrder,
+        },
+      });
+      setExerciseList(data.data.exercises);
+      // setCurrentPage(current_page);
+      // setTotalPages(total);
+    };
+    filteredAllElement();
+  }, [category, status, search, sortOrder, sortBy]);
+
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
   const getExerciseList = async () => {
     try {
       const exerciseData = await axiosApi.get("exercise");
-      console.log(exerciseData);
+      // console.log(exerciseData);
       setExerciseList(exerciseData.data.exercises);
     } catch (err) {
       console.log(err);
@@ -109,7 +116,7 @@ const Home = () => {
                     className="form-control"
                     placeholder="search by name..."
                     value={search}
-                    onChange={handleSearchInputChange}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
               </div>
@@ -204,16 +211,28 @@ const Home = () => {
                 </div>
                 <div className="score-sort my-3">
                   <label htmlFor="score-sort">Score sort</label>
-                  <select name="" id="score-sort" className="form-select mt-2">
-                    <option value="">Score: 0-100</option>
-                    <option value="">Score: 100-0</option>
+                  <select
+                    name=""
+                    id="score-sort"
+                    className="form-select mt-2"
+                    value={sortOrder}
+                    onChange={(e) => handleScoreSortChange(e, "score")}
+                  >
+                    <option value="asc">Score: 0-100</option>
+                    <option value="desc">Score: 100-0</option>
                   </select>
                 </div>
                 <div className="status-sort my-3">
                   <label htmlFor="status-sort">Status sort</label>
-                  <select name="" id="status-sort" className="form-select mt-2">
-                    <option value="0">Yechilmagan</option>
-                    <option value="1">Yechilgan</option>
+                  <select
+                    name=""
+                    id="status-sort"
+                    className="form-select mt-2"
+                    value={sortOrder}
+                    onChange={(e) => handleScoreSortChange(e, "status")}
+                  >
+                    <option value="asc">Yechilmagan</option>
+                    <option value="desc">Yechilgan</option>
                   </select>
                 </div>
               </div>
@@ -222,7 +241,10 @@ const Home = () => {
           <div className="col-md-8">
             <div className="row">
               <div className="col-md-12">
-                <Pagenation />
+                {/* <Pagenation
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                /> */}
               </div>
             </div>
             <div className="row">
